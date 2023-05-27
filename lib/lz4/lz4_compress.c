@@ -446,7 +446,7 @@ _last_literals:
 			*op++ = (BYTE)(lastRun << ML_BITS);
 		}
 
-		memcpy(op, anchor, lastRun);
+		LZ4_memcpy(op, anchor, lastRun);
 
 		op += lastRun;
 	}
@@ -708,7 +708,7 @@ _last_literals:
 		} else {
 			*op++ = (BYTE)(lastRunSize<<ML_BITS);
 		}
-		memcpy(op, anchor, lastRunSize);
+		LZ4_memcpy(op, anchor, lastRunSize);
 		op += lastRunSize;
 	}
 
@@ -845,7 +845,7 @@ int LZ4_saveDict(LZ4_stream_t *LZ4_dict, char *safeBuffer, int dictSize)
 	if ((U32)dictSize > dict->dictSize)
 		dictSize = dict->dictSize;
 
-	memmove(safeBuffer, previousDictEnd - dictSize, dictSize);
+	LZ4_memmove(safeBuffer, previousDictEnd - dictSize, dictSize);
 
 	dict->dictionary = (const BYTE *)safeBuffer;
 	dict->dictSize = (U32)dictSize;

@@ -570,7 +570,7 @@ _Search3:
 			*op++ = (BYTE) lastRun;
 		} else
 			*op++ = (BYTE)(lastRun<<ML_BITS);
-		memcpy(op, anchor, iend - anchor);
+		LZ4_memcpy(op, anchor, iend - anchor);
 		op += iend - anchor;
 	}
 
@@ -747,7 +747,7 @@ int LZ4_saveDictHC(
 	if (dictSize > prefixSize)
 		dictSize = prefixSize;
 
-	memmove(safeBuffer, streamPtr->end - dictSize, dictSize);
+	LZ4_memmove(safeBuffer, streamPtr->end - dictSize, dictSize);
 
 	{
 		U32 const endIndex = (U32)(streamPtr->end - streamPtr->base);
