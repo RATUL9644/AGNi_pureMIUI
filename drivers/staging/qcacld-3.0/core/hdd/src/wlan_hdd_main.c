@@ -244,7 +244,6 @@ static struct cdev wlan_hdd_state_cdev;
 static struct class *class;
 static dev_t device;
 static bool hdd_loaded = false;
-#ifndef MODULE
 static struct gwlan_loader *wlan_loader;
 static ssize_t wlan_boot_cb(struct kobject *kobj,
 			    struct kobj_attribute *attr,
@@ -268,7 +267,6 @@ static struct attribute *attrs[] = {
 #define WLAN_LOADER_NAME "boot_" MULTI_IF_NAME
 #else
 #define WLAN_LOADER_NAME "boot_wlan"
-#endif
 #endif
 
 /* the Android framework expects this param even though we don't use it */
@@ -17860,7 +17858,6 @@ void hdd_driver_unload(void)
 EXPORT_SYMBOL(hdd_driver_unload);
 #endif
 
-#ifndef MODULE
 /**
  * wlan_boot_cb() - Wlan boot callback
  * @kobj:      object whose directory we're creating the link in.
@@ -17878,14 +17875,6 @@ static ssize_t wlan_boot_cb(struct kobject *kobj,
 			    const char *buf,
 			    size_t count)
 {
-
-	if (wlan_loader->loaded_state) {
-		hdd_err("wlan driver already initialized");
-		return -EALREADY;
-	}
-
-	if (hdd_driver_load())
-		return -EIO;
 
 	wlan_loader->loaded_state = MODULE_INITIALIZED;
 
@@ -17975,18 +17964,10 @@ error_return:
  */
 static int wlan_deinit_sysfs(void)
 {
-	if (!wlan_loader) {
-		hdd_err("wlan_loader is null");
-		return -EINVAL;
-	}
-
 	hdd_sysfs_cleanup();
 	return 0;
 }
 
-#endif /* MODULE */
-
-#ifdef MODULE
 /**
  * hdd_module_init() - Module init helper
  *
@@ -18004,6 +17985,7 @@ static int hdd_module_init(void)
 {
 	int ret;
 
+	ret = wlan_init_sysfs();
 	ret = wlan_hdd_state_ctrl_param_create();
 	if (ret)
 		pr_err("wlan_hdd_state_create:%x\n", ret);
@@ -18011,21 +17993,7 @@ static int hdd_module_init(void)
 	return ret;
 }
 #endif
-#else
-static int __init hdd_module_init(void)
-{
-	int ret = -EINVAL;
 
-	ret = wlan_init_sysfs();
-	if (ret)
-		hdd_err("Failed to create sysfs entry");
-
-	return ret;
-}
-#endif
-
-
-#ifdef MODULE
 /**
  * hdd_module_exit() - Exit function
  *
@@ -18037,12 +18005,6 @@ static int __init hdd_module_init(void)
 static void __exit hdd_module_exit(void)
 {
 }
-#else
-static void __exit hdd_module_exit(void)
-{
-	hdd_driver_unload();
-}
-#endif
 #else
 static void __exit hdd_module_exit(void)
 {
