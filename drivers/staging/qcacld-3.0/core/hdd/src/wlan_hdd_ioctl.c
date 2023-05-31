@@ -6948,6 +6948,36 @@ static int drv_cmd_get_disable_chan_list(struct hdd_adapter *adapter,
 }
 #endif
 
+static int drv_cmd_set_phymode(struct hdd_adapter *adapter,
+					struct hdd_context *hdd_ctx,
+					uint8_t *command,
+					uint8_t command_len,
+					struct hdd_priv_data *priv_data)
+{
+	int ret = 0;
+	uint8_t *value = command;
+	uint8_t new_phymode = 0;
+
+	/* Move pointer to ahead of SET_PHYMODE<delimiter> */
+	value = value + command_len + 1;
+
+	/* Convert the value from ascii to integer */
+	ret = kstrtou8(value, 10, &new_phymode);
+	if (ret < 0) {
+		/*
+		 * If the input value is greater than max value of datatype,
+		 * then also kstrtou8 fails
+		 */
+		hdd_err("kstrtou8 failed Input value may be out of range");
+		ret = -EINVAL;
+		goto exit;
+	}
+
+	hdd_we_update_phymode(adapter, new_phymode);
+exit:
+	return ret;
+}
+
 #ifdef FEATURE_ANI_LEVEL_REQUEST
 static int drv_cmd_get_ani_level(struct hdd_adapter *adapter,
 				 struct hdd_context *hdd_ctx,
@@ -7293,6 +7323,7 @@ static const struct hdd_drv_cmd hdd_drv_cmds[] = {
 	{"GET_FUNCTION_CALL_MAP",     drv_cmd_get_function_call_map, true},
 #endif
 	{"STOP",                      drv_cmd_dummy, false},
+	{"SET_PHYMODE",               drv_cmd_set_phymode, true},
 	/* Deprecated commands */
 	{"RXFILTER-START",            drv_cmd_dummy, false},
 	{"RXFILTER-STOP",             drv_cmd_dummy, false},
