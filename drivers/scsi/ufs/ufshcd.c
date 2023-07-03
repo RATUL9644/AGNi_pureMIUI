@@ -257,6 +257,20 @@ static struct ufs_dev_fix ufs_fixups[] = {
 		UFS_DEVICE_QUIRK_PA_HIBER8TIME),
 	UFS_FIX(UFS_VENDOR_SAMSUNG, "KLUDG4UHDB-B2D1",
 		UFS_DEVICE_QUIRK_PA_HIBER8TIME),
+	UFS_FIX(UFS_VENDOR_MICRON, UFS_ANY_MODEL,
+		UFS_DEVICE_NO_FASTAUTO),
+	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL,
+		UFS_DEVICE_NO_FASTAUTO),
+#endif
+#if defined(CONFIG_UFSTW)
+	UFS_FIX(UFS_VENDOR_MICRON, UFS_ANY_MODEL,
+		UFS_DEVICE_QUIRK_PA_HIBER8TIME),
+	UFS_FIX(UFS_VENDOR_MICRON, UFS_ANY_MODEL,
+		UFS_DEVICE_QUIRK_DELAY_AFTER_LPM),
+	UFS_FIX(UFS_VENDOR_WDC, UFS_ANY_MODEL,
+		UFS_DEVICE_QUIRK_PA_HIBER8TIME),
+	UFS_FIX(UFS_VENDOR_WDC, UFS_ANY_MODEL,
+		UFS_DEVICE_QUIRK_DELAY_AFTER_LPM),
 #endif
 #if defined(CONFIG_SCSI_SKHPB)
 	UFS_FIX(UFS_VENDOR_SKHYNIX, "H28S",
@@ -2709,7 +2723,9 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 
 	ufshcd_comp_scsi_upiu(hba, lrbp);
 #if defined(CONFIG_UFSFEATURE) && defined(CONFIG_UFSHPB)
-	if (hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG) {
+	if ((hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG) || 
+		(hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC) ||
+		(hba->dev_info.wmanufacturerid == UFS_VENDOR_MICRON)) {
 		if (cmd->cmnd[0] != 0x28)
 			BUG_ON(cmd->requeue_cnt);
 
@@ -5036,7 +5052,9 @@ static int ufshcd_slave_configure(struct scsi_device *sdev)
 	struct ufs_hba *hba = shost_priv(sdev->host);
 
 #if defined(CONFIG_UFSFEATURE)
-	if (hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG)
+	if ((hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG) ||
+		(hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC) ||
+		(hba->dev_info.wmanufacturerid == UFS_VENDOR_MICRON))
 		ufsf_slave_configure(&hba->ufsf, sdev);
 #endif
 	blk_queue_update_dma_pad(q, PRDT_DATA_BYTE_COUNT_PAD - 1);
@@ -6849,7 +6867,9 @@ out:
 	ufshcd_update_reg_hist(&hba->ufs_stats.dev_reset, (u32)err);
 	if (!err) {
 #if defined(CONFIG_UFSFEATURE)
-		if (hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG)
+		if ((hba->dev_info.wmanufacturerid == UFS_VENDOR_SAMSUNG) ||
+			(hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC) ||
+			(hba->dev_info.wmanufacturerid == UFS_VENDOR_MICRON))
 			ufsf_reset_lu(&hba->ufsf);
 #endif
 #if defined(CONFIG_SCSI_SKHPB)
