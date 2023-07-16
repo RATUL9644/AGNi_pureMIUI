@@ -59,6 +59,7 @@ struct vblank_work {
 	struct msm_drm_private *priv;
 };
 
+static struct kmem_cache *kmem_vblank_work_pool;
 static int sde_crtc_power_interrupt_handler(struct drm_crtc *crtc_drm,
 	bool en, struct sde_irq_callback *ad_irq);
 static int sde_crtc_idle_interrupt_handler(struct drm_crtc *crtc_drm,
@@ -6328,7 +6329,7 @@ static void vblank_ctrl_worker(struct kthread_work *work)
 
 	sde_crtc_vblank(priv->crtcs[cur_work->crtc_id], cur_work->enable);
 
-	kfree(cur_work);
+	kmem_cache_free(kmem_vblank_work_pool, cur_work);
 }
 
 static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
@@ -6341,7 +6342,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
 	if (!priv || crtc_id >= priv->num_crtcs)
 		return -EINVAL;
 
-	cur_work = kzalloc(sizeof(*cur_work), GFP_ATOMIC);
+	cur_work = kmem_cache_zalloc(kmem_vblank_work_pool, GFP_ATOMIC);
 	if (!cur_work)
 		return -ENOMEM;
 
@@ -6506,6 +6507,7 @@ static int _sde_crtc_init_events(struct sde_crtc *sde_crtc)
 	}
 
 	spin_lock_init(&sde_crtc->event_lock);
+	kmem_vblank_work_pool = KMEM_CACHE(vblank_work, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
 
 	INIT_LIST_HEAD(&sde_crtc->event_free_list);
 	for (i = 0; i < SDE_CRTC_MAX_EVENT_COUNT; ++i)
