@@ -3472,8 +3472,9 @@ int sde_cp_hist_interrupt(struct drm_crtc *crtc_drm, bool en,
 	}
 
 	if (!hw_dspp) {
-		DRM_DEBUG_DRIVER("invalid dspp\n");
-		return -ENODEV;
+		DRM_ERROR("invalid dspp\n");
+		ret = -EPERM;
+		goto exit;
 	}
 
 	irq_idx = sde_core_irq_idx_lookup(kms, SDE_IRQ_TYPE_HIST_DSPP_DONE,
