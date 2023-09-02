@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.4.254 Kernel Configuration
+# Linux/arm64 5.4.256 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="clang version 14.1.4"
 CONFIG_GCC_VERSION=0
@@ -21,7 +21,7 @@ CONFIG_THREAD_INFO_IN_TASK=y
 #
 CONFIG_INIT_ENV_ARG_LIMIT=32
 # CONFIG_COMPILE_TEST is not set
-CONFIG_LOCALVERSION="-AGNi_haydn_AOSP-ST_v4.3-stable-qgki"
+CONFIG_LOCALVERSION="-AGNi_haydn_AOSP-ST_v4.4-stable-qgki"
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_BUILD_SALT=""
 CONFIG_DEFAULT_HOSTNAME="haydn"
@@ -175,7 +175,7 @@ CONFIG_RD_GZIP=y
 # CONFIG_RD_LZMA is not set
 # CONFIG_RD_XZ is not set
 # CONFIG_RD_LZO is not set
-CONFIG_RD_LZ4=y
+# CONFIG_RD_LZ4 is not set
 CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
 # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
 CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION=y
@@ -1701,7 +1701,6 @@ CONFIG_BLK_DEV=y
 CONFIG_ZRAM=y
 CONFIG_ZRAM_DEF_COMP_LZORLE=y
 # CONFIG_ZRAM_DEF_COMP_ZSTD is not set
-# CONFIG_ZRAM_DEF_COMP_LZ4 is not set
 # CONFIG_ZRAM_DEF_COMP_LZO is not set
 CONFIG_ZRAM_DEF_COMP="lzo-rle"
 # CONFIG_ZRAM_WRITEBACK is not set
@@ -5559,6 +5558,11 @@ CONFIG_QCOM_SPMI_ADC5=y
 # end of Analog to digital converters
 
 #
+# Analog to digital and digital to analog converters
+#
+# end of Analog to digital and digital to analog converters
+
+#
 # Analog Front Ends
 #
 # CONFIG_IIO_RESCALE is not set
@@ -6477,7 +6481,7 @@ CONFIG_CRYPTO_SM4=y
 CONFIG_CRYPTO_DEFLATE=y
 CONFIG_CRYPTO_LZO=y
 # CONFIG_CRYPTO_842 is not set
-CONFIG_CRYPTO_LZ4=y
+# CONFIG_CRYPTO_LZ4 is not set
 # CONFIG_CRYPTO_LZ4HC is not set
 CONFIG_CRYPTO_ZSTD=y
 
@@ -6598,7 +6602,6 @@ CONFIG_ZLIB_INFLATE=y
 CONFIG_ZLIB_DEFLATE=y
 CONFIG_LZO_COMPRESS=y
 CONFIG_LZO_DECOMPRESS=y
-CONFIG_LZ4_COMPRESS=y
 CONFIG_LZ4_DECOMPRESS=y
 CONFIG_ZSTD_COMPRESS=y
 CONFIG_ZSTD_DECOMPRESS=y
